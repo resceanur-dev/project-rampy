@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Rampy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a25;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px var(--accent-glow);
+    }
+
+    .logo-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    .upload-zone {
+      background: var(--bg-secondary);
+      border: 2px dashed var(--border);
+      border-radius: 24px;
+      padding: 80px 40px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px -20px var(--accent-glow);
+    }
+
+    .upload-zone:hover::before, .upload-zone.drag-over::before {
+      opacity: 1;
+    }
+
+    .upload-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s;
+    }
+
+    .upload-zone:hover .upload-icon {
+      transform: scale(1.1) translateY(-4px);
+    }
+
+    .upload-icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: var(--accent);
+    }
+
+    .upload-zone h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .upload-zone p {
+      color: var(--text-secondary);
+    }
+
+    .upload-zone input {
+      display: none;
+    }
+
+    .file-list {
+      margin-top: 40px;
+    }
+
+    .file-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .file-list-header h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .file-count {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .file-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .file-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+    }
+
+    .file-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-icon.image { background: rgba(34, 197, 94, 0.2); }
+    .file-icon.image svg { stroke: #22c55e; }
+    .file-icon.document { background: rgba(59, 130, 246, 0.2); }
+    .file-icon.document svg { stroke: #3b82f6; }
+    .file-icon.video { background: rgba(236, 72, 153, 0.2); }
+    .file-icon.video svg { stroke: #ec4899; }
+    .file-icon.audio { background: rgba(245, 158, 11, 0.2); }
+    .file-icon.audio svg { stroke: #f59e0b; }
+    .file-icon.default { background: rgba(148, 163, 184, 0.2); }
+    .file-icon.default svg { stroke: #94a3b8; }
+
+    .file-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .file-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-name {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .file-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .file-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .file-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-secondary);
+    }
+
+    .file-btn:hover {
+      background: var(--accent);
+    }
+
+    .file-btn:hover svg {
+      stroke: white;
+    }
+
+    .file-btn.delete:hover {
+      background: var(--danger);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      stroke: var(--border);
+      margin-bottom: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 60px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .upload-zone { padding: 60px 24px; }
+      .stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+            <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+            <polyline points="21 12 16.5 14.6 16.5 19.79"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+      </div>
+      <h1>Project Rampy</h1>
+      <p class="subtitle">Drag & drop your files anywhere</p>
+    </header>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <h2>Drop files here</h2>
+      <p>or click to browse</p>
+      <input type="file" id="fileInput" multiple>
+    </div>
+
+    <div class="file-list" id="fileList" style="display: none;">
+      <div class="file-list-header">
+        <h3>Your Files</h3>
+        <span class="file-count" id="fileCount">0 files</span>
+      </div>
+      <div class="files-grid" id="filesGrid"></div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+      <p>No files yet. Drop some files above!</p>
+    </div>
+
+    <div class="stats" id="stats" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-value" id="totalFiles">0</div>
+        <div class="stat-label">Total Files</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalSize">0 MB</div>
+        <div class="stat-label">Total Size</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="fileTypes">0</div>
+        <div class="stat-label">File Types</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const filesGrid = document.getElementById('filesGrid');
+    const fileList = document.getElementById('fileList');
+    const emptyState = document.getElementById('emptyState');
+    const fileCount = document.getElementById('fileCount');
+    const stats = document.getElementById('stats');
+    const totalFilesEl = document.getElementById('totalFiles');
+    const totalSizeEl = document.getElementById('totalSize');
+    const fileTypesEl = document.getElementById('fileTypes');
+
+    let files = [];
+
+    const iconSvgs = {
+      image: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+      document: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+      video: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+      audio: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+      default: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`
+    };
+
+    function getFileType(file) {
+      if (file.type.startsWith('image/')) return 'image';
+      if (file.type.startsWith('video/')) return 'video';
+      if (file.type.startsWith('audio/')) return 'audio';
+      if (file.type.includes('pdf') || file.type.includes('document') || file.type.includes('text')) return 'document';
+      return 'default';
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function updateStats() {
+      totalFilesEl.textContent = files.length;
+      const totalSize = files.reduce((acc, f) => acc + f.size, 0);
+      totalSizeEl.textContent = formatSize(totalSize);
+      const types = new Set(files.map(f => getFileType(f)));
+      fileTypesEl.textContent = types.size;
+    }
+
+    function renderFiles() {
+      if (files.length === 0) {
+        fileList.style.display = 'none';
+        stats.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      fileList.style.display = 'block';
+      stats.style.display = 'grid';
+      emptyState.style.display = 'none';
+      fileCount.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
+
+      filesGrid.innerHTML = files.map((file, index) => {
+        const type = getFileType(file);
+        return `
+          <div class="file-card">
+            <div class="file-icon ${type}">
+              ${iconSvgs[type]}
+            </div>
+            <div class="file-info">
+              <div class="file-name">${file.name}</div>
+              <div class="file-meta">${formatSize(file.size)}</div>
+            </div>
+            <div class="file-actions">
+              <button class="file-btn" onclick="downloadFile(${index})" title="Download">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              </button>
+              <button class="file-btn delete" onclick="deleteFile(${index})" title="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateStats();
+    }
+
+    function addFiles(newFiles) {
+      files = [...files, ...Array.from(newFiles)];
+      renderFiles();
+    }
+
+    function deleteFile(index) {
+      files.splice(index, 1);
+      renderFiles();
+    }
+
+    function downloadFile(index) {
+      const file = files[index];
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      addFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      addFiles(e.target.files);
+      fileInput.value = '';
+    });
+  </script>
+</body>
+</html>
