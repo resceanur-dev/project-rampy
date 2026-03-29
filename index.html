@@ -133,6 +133,11 @@
       opacity: 1;
     }
 
+    .upload-zone.uploading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
     .upload-icon {
       width: 80px;
       height: 80px;
@@ -192,7 +197,7 @@
 
     .files-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 16px;
     }
 
@@ -243,6 +248,8 @@
     .file-icon.video svg { stroke: #ec4899; }
     .file-icon.audio { background: rgba(245, 158, 11, 0.2); }
     .file-icon.audio svg { stroke: #f59e0b; }
+    .file-icon.archive { background: rgba(168, 85, 247, 0.2); }
+    .file-icon.archive svg { stroke: #a855f7; }
     .file-icon.default { background: rgba(148, 163, 184, 0.2); }
     .file-icon.default svg { stroke: #94a3b8; }
 
@@ -345,6 +352,46 @@
       font-size: 0.9rem;
     }
 
+    .share-link {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .share-link input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .share-link input:focus {
+      outline: none;
+    }
+
+    .share-link button {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .share-link button:hover {
+      background: var(--accent-hover);
+    }
+
     @media (max-width: 768px) {
       h1 { font-size: 2rem; }
       .upload-zone { padding: 60px 24px; }
@@ -370,7 +417,12 @@
         </div>
       </div>
       <h1>Project Rampy</h1>
-      <p class="subtitle">Drag & drop your files anywhere</p>
+      <p class="subtitle">Shared file storage - upload once, access anywhere</p>
+      
+      <div class="share-link">
+        <input type="text" id="shareUrl" readonly>
+        <button onclick="copyLink()">Copy Link</button>
+      </div>
     </header>
 
     <div class="upload-zone" id="uploadZone">
@@ -388,7 +440,7 @@
 
     <div class="file-list" id="fileList" style="display: none;">
       <div class="file-list-header">
-        <h3>Your Files</h3>
+        <h3>Shared Files</h3>
         <span class="file-count" id="fileCount">0 files</span>
       </div>
       <div class="files-grid" id="filesGrid"></div>
@@ -428,36 +480,48 @@
     const totalFilesEl = document.getElementById('totalFiles');
     const totalSizeEl = document.getElementById('totalSize');
     const fileTypesEl = document.getElementById('fileTypes');
+    const shareUrl = document.getElementById('shareUrl');
 
     let files = [];
+
+    shareUrl.value = window.location.href;
 
     const iconSvgs = {
       image: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
       document: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
       video: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
       audio: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+      archive: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>`,
       default: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`
     };
 
-    function getFileType(file) {
-      if (file.type.startsWith('image/')) return 'image';
-      if (file.type.startsWith('video/')) return 'video';
-      if (file.type.startsWith('audio/')) return 'audio';
-      if (file.type.includes('pdf') || file.type.includes('document') || file.type.includes('text')) return 'document';
+    function getFileType(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return 'image';
+      if (['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(ext)) return 'video';
+      if (['mp3', 'wav', 'ogg', 'flac', 'aac'].includes(ext)) return 'audio';
+      if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'archive';
+      if (['pdf', 'doc', 'docx', 'txt', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) return 'document';
       return 'default';
     }
 
     function formatSize(bytes) {
       if (bytes < 1024) return bytes + ' B';
       if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
     function updateStats() {
       totalFilesEl.textContent = files.length;
       const totalSize = files.reduce((acc, f) => acc + f.size, 0);
       totalSizeEl.textContent = formatSize(totalSize);
-      const types = new Set(files.map(f => getFileType(f)));
+      const types = new Set(files.map(f => getFileType(f.name)));
       fileTypesEl.textContent = types.size;
     }
 
@@ -474,31 +538,25 @@
       emptyState.style.display = 'none';
       fileCount.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
 
-      filesGrid.innerHTML = files.map((file, index) => {
-        const type = getFileType(file);
+      filesGrid.innerHTML = files.map(file => {
+        const type = getFileType(file.name);
         return `
           <div class="file-card">
             <div class="file-icon ${type}">
               ${iconSvgs[type]}
             </div>
             <div class="file-info">
-              <div class="file-name">${file.name}</div>
-              <div class="file-meta">${formatSize(file.size)}</div>
+              <div class="file-name" title="${file.name}">${file.name}</div>
+              <div class="file-meta">${formatSize(file.size)} · ${formatDate(file.uploadedAt)}</div>
             </div>
             <div class="file-actions">
-              <button class="file-btn" onclick="downloadFile(${index})" title="Download">
+              <a href="/download/${file.id}" class="file-btn" title="Download">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-              </button>
-              <button class="file-btn delete" onclick="deleteFile(${index})" title="Delete">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                </svg>
-              </button>
+              </a>
             </div>
           </div>
         `;
@@ -507,24 +565,32 @@
       updateStats();
     }
 
-    function addFiles(newFiles) {
-      files = [...files, ...Array.from(newFiles)];
+    async function loadFiles() {
+      const res = await fetch('/api/files');
+      files = await res.json();
       renderFiles();
     }
 
-    function deleteFile(index) {
-      files.splice(index, 1);
-      renderFiles();
+    async function uploadFiles(newFiles) {
+      uploadZone.classList.add('uploading');
+      
+      for (const file of Array.from(newFiles)) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+      }
+      
+      uploadZone.classList.remove('uploading');
+      loadFiles();
     }
 
-    function downloadFile(index) {
-      const file = files[index];
-      const url = URL.createObjectURL(file);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.name;
-      a.click();
-      URL.revokeObjectURL(url);
+    function copyLink() {
+      shareUrl.select();
+      document.execCommand('copy');
     }
 
     uploadZone.addEventListener('click', () => fileInput.click());
@@ -541,13 +607,15 @@
     uploadZone.addEventListener('drop', (e) => {
       e.preventDefault();
       uploadZone.classList.remove('drag-over');
-      addFiles(e.dataTransfer.files);
+      uploadFiles(e.dataTransfer.files);
     });
 
     fileInput.addEventListener('change', (e) => {
-      addFiles(e.target.files);
+      uploadFiles(e.target.files);
       fileInput.value = '';
     });
+
+    loadFiles();
   </script>
 </body>
 </html>
