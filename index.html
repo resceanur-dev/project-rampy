@@ -7,6 +7,62 @@
     <link rel="icon" type="image/jpeg" href="657140267_1457482023059054_3008946711291199949_n.jpg">
     
     <style>
+		:root {
+		--bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		--text-color: #ffffff;
+		--text-muted: rgba(255, 255, 255, 0.9);
+		--heading-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+		--logo-border: white;
+		--card-bg: rgba(255, 255, 255, 0.1);
+		--card-border: rgba(255, 255, 255, 0.18);
+		--card-shadow: 0 8px 32px rgba(0,0,0,0.1);
+		--card-shadow-hover: 0 12px 48px rgba(0,0,0,0.15);
+		--card-heading: #ffffff;
+		--contact-bg: rgba(255, 255, 255, 0.1);
+		--contact-bg-hover: rgba(255, 255, 255, 0.2);
+		--footer-border: rgba(255, 255, 255, 0.1);
+		--encrypted-bg: rgba(0, 255, 0, 0.1);
+		--encrypted-border: rgba(0, 255, 0, 0.3);
+		--settings-btn-bg: rgba(255, 255, 255, 0.15);
+		--settings-btn-hover: rgba(255, 255, 255, 0.25);
+		--modal-bg: rgba(30, 20, 60, 0.97);
+		--modal-border: rgba(255, 255, 255, 0.15);
+		--modal-text: #ffffff;
+		--modal-subtext: rgba(255, 255, 255, 0.7);
+		--toggle-track-off: rgba(255, 255, 255, 0.2);
+		--toggle-track-on: #667eea;
+		--toggle-thumb: #ffffff;
+		--section-divider: rgba(255, 255, 255, 0.1);
+		}
+
+		[data-theme="light"] {
+		--bg-gradient: linear-gradient(135deg, #e8ecf5 0%, #c9d6e8 100%);
+		--text-color: #1e1e2e;
+		--text-muted: rgba(30, 30, 46, 0.85);
+		--heading-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+		--logo-border: #667eea;
+		--card-bg: rgba(255, 255, 255, 0.82);
+		--card-border: rgba(102, 126, 234, 0.18);
+		--card-shadow: 0 8px 32px rgba(100, 100, 160, 0.12);
+		--card-shadow-hover: 0 12px 48px rgba(100, 100, 160, 0.2);
+		--card-heading: #2d2050;
+		--contact-bg: rgba(102, 126, 234, 0.12);
+		--contact-bg-hover: rgba(102, 126, 234, 0.22);
+		--footer-border: rgba(0, 0, 0, 0.1);
+		--encrypted-bg: rgba(0, 160, 0, 0.08);
+		--encrypted-border: rgba(0, 130, 0, 0.3);
+		--settings-btn-bg: rgba(102, 126, 234, 0.15);
+		--settings-btn-hover: rgba(102, 126, 234, 0.28);
+		--modal-bg: #ffffff;
+		--modal-border: rgba(102, 126, 234, 0.2);
+		--modal-text: #1e1e2e;
+		--modal-subtext: rgba(30, 30, 46, 0.65);
+		--toggle-track-off: #c5cce6;
+		--toggle-track-on: #667eea;
+		--toggle-thumb: #ffffff;
+		--section-divider: rgba(0, 0, 0, 0.08);
+		}
+
 		* {
 		margin: 0;
 		padding: 0;
@@ -15,11 +71,12 @@
 
 		body {
 		font-family: 'Arial', sans-serif;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
+		background: var(--bg-gradient);
+		color: var(--text-color);
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
+		transition: background 0.4s ease, color 0.4s ease;
 		}
 
 		.container {
@@ -30,30 +87,69 @@
 
 		header {
 		text-align: center;
-		padding: 40px 0;
+		padding: 40px 0 30px;
+		position: relative;
+		}
+
+		.settings-btn {
+		position: absolute;
+		top: 40px;
+		right: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 18px;
+		background: var(--settings-btn-bg);
+		border: 1px solid var(--modal-border);
+		border-radius: 50px;
+		color: var(--text-color);
+		cursor: pointer;
+		font-size: 0.95em;
+		font-weight: 600;
+		transition: background 0.3s ease, transform 0.2s ease;
+		backdrop-filter: blur(6px);
+		}
+
+		.settings-btn:hover {
+		background: var(--settings-btn-hover);
+		transform: scale(1.05);
+		}
+
+		.settings-btn svg {
+		width: 18px;
+		height: 18px;
+		fill: currentColor;
+		transition: transform 0.4s ease;
+		}
+
+		.settings-btn:hover svg {
+		transform: rotate(45deg);
 		}
 
 		.logo {
 		width: 150px;
 		height: 150px;
 		border-radius: 50%;
-		border: 4px solid white;
+		border: 4px solid var(--logo-border);
 		box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 		margin: 0 auto 20px;
 		background: url('657140267_1457482023059054_3008946711291199949_n.jpg') center/cover;
 		background-size: cover;
+		transition: border-color 0.4s ease;
 		}
 
 		h1 {
 		font-size: 3em;
 		margin-bottom: 10px;
-		text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+		text-shadow: var(--heading-shadow);
+		transition: text-shadow 0.4s ease;
 		}
 
 		.tagline {
 		font-size: 1.2em;
 		opacity: 0.9;
 		margin-bottom: 30px;
+		color: var(--text-muted);
 		}
 
 		.main-content {
@@ -64,35 +160,54 @@
 		}
 
 		.card {
-		background: rgba(255, 255, 255, 0.1);
+		background: var(--card-bg);
 		backdrop-filter: blur(10px);
 		border-radius: 15px;
 		padding: 30px;
-		box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-		border: 1px solid rgba(255, 255, 255, 0.18);
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		box-shadow: var(--card-shadow);
+		border: 1px solid var(--card-border);
+		transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s ease, border-color 0.4s ease;
 		}
 
 		.card:hover {
 		transform: translateY(-5px);
-		box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+		box-shadow: var(--card-shadow-hover);
 		}
 
 		.card h2 {
 		font-size: 1.8em;
 		margin-bottom: 20px;
-		color: #fff;
+		color: var(--card-heading);
+		transition: color 0.4s ease;
 		}
 
 		.card p {
 		line-height: 1.6;
 		margin-bottom: 20px;
-		opacity: 0.9;
+		color: var(--text-muted);
+		transition: color 0.4s ease;
+		}
+
+		.card ul li {
+		color: var(--text-muted);
+		transition: color 0.4s ease;
 		}
 
 		.download-section {
 		text-align: center;
 		margin: 40px 0;
+		}
+
+		.download-section h2 {
+		color: var(--text-color);
+		margin-bottom: 10px;
+		transition: color 0.4s ease;
+		}
+
+		.download-section p {
+		color: var(--text-muted);
+		margin-bottom: 20px;
+		transition: color 0.4s ease;
 		}
 
 		.download-btn {
@@ -127,16 +242,16 @@
 		align-items: center;
 		gap: 10px;
 		padding: 15px 25px;
-		background: rgba(255, 255, 255, 0.1);
+		background: var(--contact-bg);
 		border-radius: 50px;
-		color: white;
+		color: var(--text-color);
 		text-decoration: none;
 		transition: all 0.3s ease;
 		backdrop-filter: blur(5px);
 		}
 
 		.contact-link:hover {
-		background: rgba(255, 255, 255, 0.2);
+		background: var(--contact-bg-hover);
 		transform: scale(1.05);
 		}
 
@@ -150,16 +265,216 @@
 		text-align: center;
 		padding: 40px 0;
 		margin-top: auto;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		border-top: 1px solid var(--footer-border);
+		color: var(--text-muted);
+		transition: border-color 0.4s ease, color 0.4s ease;
 		}
 
 		.encrypted-notice {
-		background: rgba(0, 255, 0, 0.1);
-		border: 1px solid rgba(0, 255, 0, 0.3);
+		background: var(--encrypted-bg);
+		border: 1px solid var(--encrypted-border);
 		border-radius: 10px;
 		padding: 15px;
 		margin: 20px 0;
 		text-align: center;
+		color: var(--text-muted);
+		transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+		}
+
+		/* ── Settings Modal ── */
+		.settings-overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.55);
+		backdrop-filter: blur(4px);
+		z-index: 1000;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+		}
+
+		.settings-overlay.open {
+		display: flex;
+		}
+
+		.settings-overlay.visible {
+		opacity: 1;
+		}
+
+		.settings-modal {
+		background: var(--modal-bg);
+		border: 1px solid var(--modal-border);
+		border-radius: 20px;
+		padding: 36px 32px;
+		width: 100%;
+		max-width: 420px;
+		margin: 20px;
+		box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+		transform: translateY(20px);
+		transition: transform 0.3s ease, background 0.4s ease, border-color 0.4s ease;
+		}
+
+		.settings-overlay.visible .settings-modal {
+		transform: translateY(0);
+		}
+
+		.settings-modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 28px;
+		}
+
+		.settings-modal-header h2 {
+		font-size: 1.5em;
+		color: var(--modal-text);
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		transition: color 0.4s ease;
+		}
+
+		.settings-close-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: var(--modal-subtext);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 6px;
+		border-radius: 50%;
+		transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+		}
+
+		.settings-close-btn:hover {
+		background: var(--settings-btn-bg);
+		color: var(--modal-text);
+		transform: rotate(90deg);
+		}
+
+		.settings-close-btn svg {
+		width: 22px;
+		height: 22px;
+		fill: currentColor;
+		}
+
+		.settings-divider {
+		height: 1px;
+		background: var(--section-divider);
+		margin: 20px 0;
+		transition: background 0.4s ease;
+		}
+
+		.settings-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		}
+
+		.settings-label {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		}
+
+		.settings-label span {
+		font-size: 1.05em;
+		font-weight: 600;
+		color: var(--modal-text);
+		transition: color 0.4s ease;
+		}
+
+		.settings-label small {
+		font-size: 0.82em;
+		color: var(--modal-subtext);
+		transition: color 0.4s ease;
+		}
+
+		/* Toggle Switch */
+		.theme-toggle {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		}
+
+		.theme-toggle-label {
+		font-size: 0.85em;
+		font-weight: 600;
+		color: var(--modal-subtext);
+		transition: color 0.3s ease;
+		min-width: 34px;
+		}
+
+		.theme-toggle-label.active {
+		color: var(--modal-text);
+		}
+
+		.toggle-switch {
+		position: relative;
+		width: 54px;
+		height: 28px;
+		flex-shrink: 0;
+		}
+
+		.toggle-switch input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+		position: absolute;
+		}
+
+		.toggle-track {
+		position: absolute;
+		inset: 0;
+		background: var(--toggle-track-off);
+		border-radius: 28px;
+		cursor: pointer;
+		transition: background 0.35s ease;
+		}
+
+		.toggle-track::before {
+		content: '';
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		left: 4px;
+		top: 4px;
+		background: var(--toggle-thumb);
+		border-radius: 50%;
+		transition: transform 0.35s ease, background 0.35s ease;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+		}
+
+		.toggle-switch input:checked + .toggle-track {
+		background: var(--toggle-track-on);
+		}
+
+		.toggle-switch input:checked + .toggle-track::before {
+		transform: translateX(26px);
+		}
+
+		.toggle-switch input:focus-visible + .toggle-track {
+		outline: 2px solid #667eea;
+		outline-offset: 2px;
+		}
+
+		.theme-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 14px;
+		padding: 7px 14px;
+		border-radius: 50px;
+		font-size: 0.82em;
+		font-weight: 700;
+		border: 1px solid var(--modal-border);
+		background: var(--settings-btn-bg);
+		color: var(--modal-text);
+		transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 		}
 
 		@media (max-width: 768px) {
@@ -175,16 +490,70 @@
 		flex-direction: column;
 		align-items: center;
 		}
+
+		.settings-btn span {
+		display: none;
+		}
+
+		.settings-btn {
+		padding: 10px 12px;
+		}
 		}
 	</style>
 </head>
 <body>
     <div class="container">
         <header>
+            <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+                <span>Settings</span>
+            </button>
             <div class="logo"></div>
             <h1>Project Rampy</h1>
             <p class="tagline">Advanced Learning Machine & AI Research</p>
         </header>
+
+        <!-- Settings Modal -->
+        <div class="settings-overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+            <div class="settings-modal">
+                <div class="settings-modal-header">
+                    <h2 id="settingsTitle">
+                        <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;flex-shrink:0" aria-hidden="true">
+                            <path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                        </svg>
+                        Settings
+                    </h2>
+                    <button class="settings-close-btn" id="settingsCloseBtn" aria-label="Close settings">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-row">
+                    <div class="settings-label">
+                        <span>Theme</span>
+                        <small>Choose your preferred color scheme</small>
+                    </div>
+                    <div class="theme-toggle">
+                        <span class="theme-toggle-label" id="labelLight">Light</span>
+                        <label class="toggle-switch" aria-label="Toggle dark mode">
+                            <input type="checkbox" id="themeToggle" role="switch" aria-checked="false">
+                            <span class="toggle-track"></span>
+                        </label>
+                        <span class="theme-toggle-label" id="labelDark">Dark</span>
+                    </div>
+                </div>
+
+                <div style="margin-top:8px">
+                    <span class="theme-badge" id="themeBadge">🌙 Dark mode active</span>
+                </div>
+            </div>
+        </div>
 
         <main class="main-content">
             <div class="card">
@@ -406,6 +775,66 @@
         });
 
         console.log("Project Rampy website loaded successfully with encrypted SQLite storage");
+
+		// ── Theme & Settings ──────────────────────────────────────────────
+		const THEME_KEY = 'rampy-theme';
+
+		function applyTheme(isDark) {
+			document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+			const toggle = document.getElementById('themeToggle');
+			const badge  = document.getElementById('themeBadge');
+			const labelLight = document.getElementById('labelLight');
+			const labelDark  = document.getElementById('labelDark');
+			if (toggle) toggle.checked = isDark;
+			if (toggle) toggle.setAttribute('aria-checked', isDark ? 'true' : 'false');
+			if (badge)  badge.textContent = isDark ? '🌙 Dark mode active' : '☀️ Light mode active';
+			if (labelLight) labelLight.classList.toggle('active', !isDark);
+			if (labelDark)  labelDark.classList.toggle('active',  isDark);
+		}
+
+		// Load saved preference (default: dark) — set attribute early to avoid any flash
+		const savedTheme = localStorage.getItem(THEME_KEY);
+		const prefersDark = savedTheme !== null ? savedTheme === 'dark' : true;
+		document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+		applyTheme(prefersDark);
+
+		// Toggle handler
+		document.getElementById('themeToggle').addEventListener('change', function () {
+			const isDark = this.checked;
+			applyTheme(isDark);
+			localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+		});
+
+		// Open / close settings modal
+		const overlay    = document.getElementById('settingsOverlay');
+		const openBtn    = document.getElementById('settingsBtn');
+		const closeBtn   = document.getElementById('settingsCloseBtn');
+
+		function openSettings() {
+			overlay.classList.add('open');
+			requestAnimationFrame(() => overlay.classList.add('visible'));
+			closeBtn.focus();
+		}
+
+		function closeSettings() {
+			overlay.classList.remove('visible');
+			// Use both transitionend and a timeout fallback so 'open' is always removed
+			const cleanup = () => overlay.classList.remove('open');
+			overlay.addEventListener('transitionend', cleanup, { once: true });
+			setTimeout(cleanup, 400);
+			openBtn.focus();
+		}
+
+		openBtn.addEventListener('click', openSettings);
+		closeBtn.addEventListener('click', closeSettings);
+
+		overlay.addEventListener('click', function (e) {
+			if (e.target === overlay) closeSettings();
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape' && overlay.classList.contains('open')) closeSettings();
+		});
     </script>
 </body>
 </html>
