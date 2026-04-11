@@ -7,6 +7,43 @@
     <link rel="icon" type="image/jpeg" href="657140267_1457482023059054_3008946711291199949_n.jpg">
     
     <style>
+		/* ── Theme variables ── */
+		:root {
+		--bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		--text-color: white;
+		--card-bg: rgba(255, 255, 255, 0.1);
+		--card-border: rgba(255, 255, 255, 0.18);
+		--card-shadow: rgba(0, 0, 0, 0.1);
+		--card-shadow-hover: rgba(0, 0, 0, 0.15);
+		--logo-border: white;
+		--contact-bg: rgba(255, 255, 255, 0.1);
+		--contact-bg-hover: rgba(255, 255, 255, 0.2);
+		--footer-border: rgba(255, 255, 255, 0.1);
+		--encrypted-bg: rgba(0, 255, 0, 0.1);
+		--encrypted-border: rgba(0, 255, 0, 0.3);
+		--toggle-bg: rgba(255, 255, 255, 0.15);
+		--toggle-bg-hover: rgba(255, 255, 255, 0.3);
+		--toggle-color: white;
+		}
+
+		[data-theme="light"] {
+		--bg-gradient: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%);
+		--text-color: #2d2d4e;
+		--card-bg: rgba(255, 255, 255, 0.75);
+		--card-border: rgba(100, 100, 200, 0.2);
+		--card-shadow: rgba(100, 100, 200, 0.12);
+		--card-shadow-hover: rgba(100, 100, 200, 0.22);
+		--logo-border: #764ba2;
+		--contact-bg: rgba(255, 255, 255, 0.6);
+		--contact-bg-hover: rgba(255, 255, 255, 0.9);
+		--footer-border: rgba(100, 100, 200, 0.2);
+		--encrypted-bg: rgba(0, 180, 0, 0.08);
+		--encrypted-border: rgba(0, 180, 0, 0.35);
+		--toggle-bg: rgba(100, 100, 200, 0.15);
+		--toggle-bg-hover: rgba(100, 100, 200, 0.3);
+		--toggle-color: #2d2d4e;
+		}
+
 		* {
 		margin: 0;
 		padding: 0;
@@ -15,11 +52,12 @@
 
 		body {
 		font-family: 'Arial', sans-serif;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
+		background: var(--bg-gradient);
+		color: var(--text-color);
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
+		transition: background 0.4s ease, color 0.4s ease;
 		}
 
 		.container {
@@ -31,23 +69,60 @@
 		header {
 		text-align: center;
 		padding: 40px 0;
+		position: relative;
+		}
+
+		/* ── Theme toggle button ── */
+		.theme-toggle {
+		position: absolute;
+		top: 0;
+		right: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 18px;
+		background: var(--toggle-bg);
+		color: var(--toggle-color);
+		border: 1px solid var(--card-border);
+		border-radius: 50px;
+		cursor: pointer;
+		font-size: 0.95em;
+		font-weight: bold;
+		backdrop-filter: blur(5px);
+		transition: background 0.3s ease, transform 0.2s ease, color 0.4s ease, border-color 0.4s ease;
+		}
+
+		.theme-toggle:hover {
+		background: var(--toggle-bg-hover);
+		transform: scale(1.05);
+		}
+
+		.theme-toggle:focus-visible {
+		outline: 3px solid currentColor;
+		outline-offset: 3px;
+		}
+
+		.theme-toggle .toggle-icon {
+		font-size: 1.2em;
+		line-height: 1;
 		}
 
 		.logo {
 		width: 150px;
 		height: 150px;
 		border-radius: 50%;
-		border: 4px solid white;
+		border: 4px solid var(--logo-border);
 		box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 		margin: 0 auto 20px;
 		background: url('657140267_1457482023059054_3008946711291199949_n.jpg') center/cover;
 		background-size: cover;
+		transition: border-color 0.4s ease;
 		}
 
 		h1 {
 		font-size: 3em;
 		margin-bottom: 10px;
-		text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+		text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 		}
 
 		.tagline {
@@ -64,24 +139,26 @@
 		}
 
 		.card {
-		background: rgba(255, 255, 255, 0.1);
+		background: var(--card-bg);
 		backdrop-filter: blur(10px);
 		border-radius: 15px;
 		padding: 30px;
-		box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-		border: 1px solid rgba(255, 255, 255, 0.18);
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		box-shadow: 0 8px 32px var(--card-shadow);
+		border: 1px solid var(--card-border);
+		transition: transform 0.3s ease, box-shadow 0.3s ease,
+		            background 0.4s ease, border-color 0.4s ease;
 		}
 
 		.card:hover {
 		transform: translateY(-5px);
-		box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+		box-shadow: 0 12px 48px var(--card-shadow-hover);
 		}
 
 		.card h2 {
 		font-size: 1.8em;
 		margin-bottom: 20px;
-		color: #fff;
+		color: var(--text-color);
+		transition: color 0.4s ease;
 		}
 
 		.card p {
@@ -127,16 +204,16 @@
 		align-items: center;
 		gap: 10px;
 		padding: 15px 25px;
-		background: rgba(255, 255, 255, 0.1);
+		background: var(--contact-bg);
 		border-radius: 50px;
-		color: white;
+		color: var(--text-color);
 		text-decoration: none;
-		transition: all 0.3s ease;
+		transition: all 0.3s ease, background 0.4s ease, color 0.4s ease;
 		backdrop-filter: blur(5px);
 		}
 
 		.contact-link:hover {
-		background: rgba(255, 255, 255, 0.2);
+		background: var(--contact-bg-hover);
 		transform: scale(1.05);
 		}
 
@@ -150,16 +227,18 @@
 		text-align: center;
 		padding: 40px 0;
 		margin-top: auto;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		border-top: 1px solid var(--footer-border);
+		transition: border-color 0.4s ease;
 		}
 
 		.encrypted-notice {
-		background: rgba(0, 255, 0, 0.1);
-		border: 1px solid rgba(0, 255, 0, 0.3);
+		background: var(--encrypted-bg);
+		border: 1px solid var(--encrypted-border);
 		border-radius: 10px;
 		padding: 15px;
 		margin: 20px 0;
 		text-align: center;
+		transition: background 0.4s ease, border-color 0.4s ease;
 		}
 
 		@media (max-width: 768px) {
@@ -175,12 +254,21 @@
 		flex-direction: column;
 		align-items: center;
 		}
+
+		.theme-toggle {
+		position: static;
+		margin: 0 auto 20px;
+		}
 		}
 	</style>
 </head>
 <body>
     <div class="container">
         <header>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span class="toggle-icon" id="toggleIcon">🌙</span>
+                <span id="toggleLabel">Dark Mode</span>
+            </button>
             <div class="logo"></div>
             <h1>Project Rampy</h1>
             <p class="tagline">Advanced Learning Machine & AI Research</p>
@@ -406,6 +494,37 @@
         });
 
         console.log("Project Rampy website loaded successfully with encrypted SQLite storage");
+
+// ── Theme switcher ──
+(function() {
+const html = document.documentElement;
+const btn = document.getElementById('themeToggle');
+const icon = document.getElementById('toggleIcon');
+const label = document.getElementById('toggleLabel');
+
+function applyTheme(theme) {
+if (theme === 'light') {
+html.setAttribute('data-theme', 'light');
+icon.textContent = '☀️'; // sun
+label.textContent = 'Light Mode';
+} else {
+html.removeAttribute('data-theme');
+icon.textContent = '🌙'; // moon
+label.textContent = 'Dark Mode';
+}
+}
+
+// Load saved preference or default to dark
+const saved = localStorage.getItem('rampy-theme');
+		applyTheme(saved || 'dark');
+
+btn.addEventListener('click', function() {
+const current = html.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+const next = current === 'light' ? 'dark' : 'light';
+applyTheme(next);
+localStorage.setItem('rampy-theme', next);
+});
+})();
     </script>
 </body>
 </html>
